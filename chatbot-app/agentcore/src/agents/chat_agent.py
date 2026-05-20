@@ -127,9 +127,12 @@ class ChatAgent(BaseAgent):
             # Create model configuration
             model_config = {
                 "model_id": config["model_id"],
-                "temperature": config.get("temperature", 0.7),
-                "boto_client_config": retry_config
+                "boto_client_config": retry_config,
+                "max_tokens": 32000,
             }
+            # Extended thinking models (Opus 4.7) don't support temperature
+            if "opus-4-7" not in config["model_id"]:
+                model_config["temperature"] = config.get("temperature", 0.7)
 
             # Add CacheConfig if caching is enabled (strands-agents 1.24.0+)
             if self.caching_enabled:

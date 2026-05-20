@@ -17,7 +17,7 @@ import { bufferMessage, setFlushHandler, clearBusy } from "./inbound-buffer.js";
 const MODELS = [
   { id: "us.anthropic.claude-sonnet-4-6", label: "Sonnet 4.6" },
   { id: "us.anthropic.claude-haiku-4-5-20251001-v1:0", label: "Haiku 4.5" },
-  { id: "us.anthropic.claude-opus-4-6-v1", label: "Opus 4.6" },
+  { id: "us.anthropic.claude-opus-4-7", label: "Opus 4.7" },
 ] as const;
 
 export function setupMessageHandlers(bot: Bot): void {

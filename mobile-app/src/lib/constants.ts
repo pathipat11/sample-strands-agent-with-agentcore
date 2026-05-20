@@ -31,7 +31,7 @@ export interface ModelInfo {
 }
 
 export const AVAILABLE_MODELS: ModelInfo[] = [
-  { id: 'us.anthropic.claude-opus-4-6-v1', name: 'Claude Opus 4.6', provider: 'Anthropic', description: 'Most intelligent model' },
+  { id: 'us.anthropic.claude-opus-4-7', name: 'Claude Opus 4.7', provider: 'Anthropic', description: 'Most intelligent model' },
   { id: 'us.anthropic.claude-sonnet-4-6', name: 'Claude Sonnet 4.6', provider: 'Anthropic', description: 'Balanced performance' },
   { id: 'us.anthropic.claude-haiku-4-5-20251001-v1:0', name: 'Claude Haiku 4.5', provider: 'Anthropic', description: 'Fast and efficient' },
   { id: 'us.amazon.nova-2-pro-preview-20251202-v1:0', name: 'Nova 2 Pro', provider: 'Amazon', description: 'High-performance multimodal' },
