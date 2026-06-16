@@ -7,6 +7,9 @@ This repository demonstrates how to design and deploy a multi-agent chatbot that
 tool execution, memory, browser automation, and agent-to-agent collaboration.
 It is intended as a realistic, extensible sample for teams exploring advanced agent architectures on AWS.
 
+> [!NOTE]
+> **New: Bedrock Mantle models.** The model picker now includes OpenAI **GPT-5.5 / GPT-5.4**, **xAI Grok 4.3**, and **Google Gemma 4** via Amazon Bedrock's OpenAI-compatible Mantle endpoints — alongside the native Bedrock models (Claude, DeepSeek, Qwen, and more).
+
 ---
 
 ## Demo
@@ -77,6 +80,7 @@ This sample combines **Strands Agent orchestration** with **Amazon Bedrock Agent
 - Built-in Code Interpreter for charts and documents
 - Multimodal input and output (vision, charts, documents, screenshots)
 - Real-time voice interaction with Amazon Nova Sonic 2
+- Wide model selection — native Bedrock models (Claude, DeepSeek, Qwen, GLM, ...) plus OpenAI GPT-5.x, Grok, and Gemma 4 via Bedrock Mantle
 
 ---
 
