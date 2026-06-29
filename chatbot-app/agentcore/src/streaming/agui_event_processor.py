@@ -14,6 +14,19 @@ from ag_ui.encoder import EventEncoder
 
 logger = logging.getLogger(__name__)
 
+# Cap agent loop iterations to stop runaway tool-call loops — e.g. a model that
+# keeps emitting malformed/XML tool calls or repeatedly re-dispatches a skill
+# without ever producing a final answer. When the cap trips, Strands ends the
+# loop with stop_reason="limit_turns" (history stays valid/reinvokable) instead
+# of spinning forever. Override with the AGENT_MAX_TURNS env var.
+try:
+    AGENT_MAX_TURNS = int(os.environ.get("AGENT_MAX_TURNS", "20"))
+except (TypeError, ValueError):
+    AGENT_MAX_TURNS = 20
+
+# Stop reasons emitted by Strands when an invocation limit is reached.
+_LIMIT_STOP_REASONS = ("limit_turns", "limit_total_tokens", "limit_output_tokens")
+
 
 class AGUIStreamEventProcessor:
     """Processes streaming events from the agent and formats them as AG-UI protocol events"""
@@ -319,11 +332,14 @@ class AGUIStreamEventProcessor:
             # Initialize streaming
             yield self.formatter.format_event("init")
 
-            # Pass invocation_state to agent for tool context access
+            # Pass invocation_state to agent for tool context access.
+            # `limits` caps loop iterations so a looping model terminates
+            # gracefully (stop_reason="limit_turns") instead of spinning.
+            agent_limits = {"turns": AGENT_MAX_TURNS}
             if invocation_state:
-                stream_iterator = agent.stream_async(multimodal_message, invocation_state=invocation_state)
+                stream_iterator = agent.stream_async(multimodal_message, invocation_state=invocation_state, limits=agent_limits)
             else:
-                stream_iterator = agent.stream_async(multimodal_message)
+                stream_iterator = agent.stream_async(multimodal_message, limits=agent_limits)
 
             # Documents are now fetched by frontend via S3 workspace API
             # No longer need to track documents in backend
@@ -465,6 +481,30 @@ class AGUIStreamEventProcessor:
                         self._fix_cancelled_history(agent)
                         self._clear_stop_signal(keep_for_remote_agent=self.tool_use_started)
                         yield self.formatter.format_event("stop")
+                        return
+
+                    # Invocation limit reached (e.g. runaway tool-call loop).
+                    # Emit whatever partial text exists, or a clear fallback,
+                    # so the user always gets a response instead of an empty
+                    # stream or an endless loop.
+                    elif hasattr(final_result, 'stop_reason') and final_result.stop_reason in _LIMIT_STOP_REASONS:
+                        logger.warning(
+                            f"[Limit] Agent hit invocation limit "
+                            f"(stop_reason={final_result.stop_reason}, max_turns={AGENT_MAX_TURNS}) "
+                            f"for session {session_id}"
+                        )
+                        _, limit_text = extract_final_result_data(final_result)
+                        if not (limit_text and limit_text.strip()):
+                            limit_text = (
+                                "I reached the maximum number of steps for this request before "
+                                "I could finish. This usually happens when a tool keeps failing "
+                                "or the model loops on tool calls without completing. Try "
+                                "rephrasing or splitting the request into smaller parts, or "
+                                "switch to a model with stronger tool-calling support."
+                            )
+                        yield self.formatter.format_event(
+                            "complete", message=limit_text, images=None, usage=self.last_usage
+                        )
                         return
 
                     else:

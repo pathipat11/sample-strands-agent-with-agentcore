@@ -63,6 +63,14 @@ class SkillChatAgent(ChatAgent):
         def _skill_allowed(skill_name: str) -> bool:
             return skill_name not in self._disabled_skills
 
+        # Skills served by an injected Gateway/MCP tool. The local @skill tools
+        # are "local replacements for Gateway Lambdas" (see local_tools/__init__),
+        # so when the real Gateway/MCP implementation is present we must NOT also
+        # auto-load the local duplicate below — otherwise two tools bind to the
+        # same skill. Gateway/MCP wins when registered; locally (empty registry,
+        # nothing injected here) the local tools load as the fallback.
+        gateway_mcp_skills: set = set()
+
         for tool_name, skill_name in tool_skill_map.items():
             if not _skill_allowed(skill_name):
                 continue
@@ -74,6 +82,7 @@ class SkillChatAgent(ChatAgent):
                 prefixed = f"gateway_{tool_name}"
             if prefixed not in self.enabled_tools:
                 self.enabled_tools.append(prefixed)
+            gateway_mcp_skills.add(skill_name)
 
         for agent_id, skill_name in a2a_tools.items():
             if not _skill_allowed(skill_name):
@@ -88,7 +97,17 @@ class SkillChatAgent(ChatAgent):
         from agents.chat_agent import TOOL_REGISTRY
         for tool_id, tool_obj in TOOL_REGISTRY.items():
             skill_name = getattr(tool_obj, '_skill_name', None)
-            if skill_name and tool_id not in loaded_ids and _skill_allowed(skill_name):
+            if not skill_name or not _skill_allowed(skill_name):
+                continue
+            if skill_name in gateway_mcp_skills:
+                # A Gateway/MCP tool already serves this skill — skip the local
+                # replacement so we don't bind two tools to the same skill.
+                logger.debug(
+                    f"[SkillChatAgent] Skipping local skill tool '{tool_id}' "
+                    f"— skill '{skill_name}' is served by Gateway/MCP"
+                )
+                continue
+            if tool_id not in loaded_ids:
                 tools.append(tool_obj)
                 logger.debug(f"[SkillChatAgent] Auto-loaded skill tool: {tool_id}")
 
