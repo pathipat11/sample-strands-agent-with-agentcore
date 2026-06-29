@@ -342,19 +342,18 @@ def build_prompt(
 
         elif filename.endswith(tuple(DOCUMENT_EXTENSIONS)):
             # Other documents (PDF, CSV, HTML, TXT, MD) — workspace-only if over 4.5 MB limit
-            if len(file_bytes) > _BEDROCK_DOC_MAX_BYTES:
-                # For PDFs, try to extract text so the model can still read the content
-                if filename.endswith(".pdf"):
-                    extracted = _extract_pdf_text(file_bytes)
-                    if extracted:
-                        content_blocks.append({"text": f"<document name=\"{sanitized_full_name}\">\n{extracted}\n</document>"})
-                        logger.info(f"Extracted text from large PDF ({len(file_bytes)} bytes, {len(extracted)} chars): {sanitized_full_name}")
-                    else:
-                        workspace_only_files.append(sanitized_full_name)
-                        logger.warning(f"PDF too large and text extraction failed ({len(file_bytes)} bytes): {sanitized_full_name}")
+            if filename.endswith(".pdf"):
+                # PDF: always extract text (Nova Pro doesn't support document ContentBlocks)
+                extracted = _extract_pdf_text(file_bytes)
+                if extracted:
+                    content_blocks.append({"text": f"<document name=\"{sanitized_full_name}\">\n{extracted}\n</document>"})
+                    logger.info(f"Extracted text from PDF ({len(file_bytes)} bytes, {len(extracted)} chars): {sanitized_full_name}")
                 else:
                     workspace_only_files.append(sanitized_full_name)
-                    logger.warning(f"File too large for ContentBlock ({len(file_bytes)} bytes), storing to workspace only: {sanitized_full_name}")
+                    logger.warning(f"PDF text extraction failed ({len(file_bytes)} bytes): {sanitized_full_name}")
+            elif len(file_bytes) > _BEDROCK_DOC_MAX_BYTES:
+                workspace_only_files.append(sanitized_full_name)
+                logger.warning(f"File too large for ContentBlock ({len(file_bytes)} bytes), storing to workspace only: {sanitized_full_name}")
             else:
                 doc_format = get_document_format(filename)
 

@@ -117,7 +117,7 @@ class ChatAgent(BaseAgent):
             model = build_model(
                 config["model_id"],
                 temperature=config.get("temperature"),
-                max_tokens=32000,
+                max_tokens=5000,
                 caching_enabled=bool(self.caching_enabled),
             )
 

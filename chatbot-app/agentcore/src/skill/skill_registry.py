@@ -138,6 +138,15 @@ class SkillRegistry:
 
         excluded = set(exclude or ())
         visible = {name: info for name, info in self._skills.items() if name not in excluded}
+
+        # Hide "tool"-type skills that have no bound tools. Locally, skills like
+        # tavily-search / google-web-search / gmail have no functional tools
+        # (they need Gateway/MCP/API keys), so the agent must not see them as
+        # available. Instruction/composite skills legitimately have no tools.
+        visible = {
+            name: info for name, info in visible.items()
+            if info.get("type", "tool") != "tool" or len(info.get("tools", [])) > 0
+        }
         if not visible:
             return ""
 

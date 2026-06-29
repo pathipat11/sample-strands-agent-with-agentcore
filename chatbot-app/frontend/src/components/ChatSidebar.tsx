@@ -162,7 +162,7 @@ export function ChatSidebar({
               </button>
             )}
           </div>
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto">
             <ChatSessionList
               sessions={chatSessions}
               currentSessionId={sessionId}
@@ -170,7 +170,7 @@ export function ChatSidebar({
               onLoadSession={loadSession}
               onDeleteSession={deleteSession}
             />
-          </ScrollArea>
+          </div>
         </div>
       )}
 
@@ -202,11 +202,10 @@ export function ChatSidebar({
                   <button
                     key={size}
                     onClick={() => setFontSize(size)}
-                    className={`flex-1 px-2 py-1 text-xs rounded transition-colors capitalize ${
-                      fontSize === size
-                        ? 'bg-background text-foreground shadow-sm font-medium'
-                        : 'text-muted-foreground hover:text-foreground'
-                    }`}
+                    className={`flex-1 px-2 py-1 text-xs rounded transition-colors capitalize ${fontSize === size
+                      ? 'bg-background text-foreground shadow-sm font-medium'
+                      : 'text-muted-foreground hover:text-foreground'
+                      }`}
                   >
                     {size === 'small' ? 'S' : size === 'medium' ? 'M' : 'L'}
                   </button>

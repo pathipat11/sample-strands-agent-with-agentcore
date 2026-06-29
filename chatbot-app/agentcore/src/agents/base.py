@@ -72,7 +72,7 @@ class BaseAgent(ABC):
 
     def _get_default_model_id(self) -> str:
         """Get default model ID for this agent type"""
-        return "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+        return "us.amazon.nova-pro-v1:0"
 
     def _load_tools(self) -> List:
         """Load and filter tools based on enabled_tools"""

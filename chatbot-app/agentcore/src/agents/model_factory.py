@@ -186,7 +186,7 @@ def build_model(
     model_id: str,
     *,
     temperature: Optional[float] = None,
-    max_tokens: int = 32000,
+    max_tokens: int = 5000,
     caching_enabled: bool = False,
 ):
     """Build the appropriate Strands model for `model_id`.

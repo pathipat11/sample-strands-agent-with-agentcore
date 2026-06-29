@@ -278,8 +278,8 @@ const customUrlTransform = (url: string): string => {
   }
   // Allow standard protocols
   if (url.startsWith('http://') || url.startsWith('https://') ||
-      url.startsWith('mailto:') || url.startsWith('tel:') ||
-      url.startsWith('/') || url.startsWith('#') || url.startsWith('./')) {
+    url.startsWith('mailto:') || url.startsWith('tel:') ||
+    url.startsWith('/') || url.startsWith('#') || url.startsWith('./')) {
     return url;
   }
   // Block other protocols for security
@@ -302,10 +302,10 @@ const parseContentWithCharts = (content: string) => {
     { regex: CHART_REF_PATTERN, type: 'chartRef' as const },
     { regex: IMAGE_PATTERN, type: 'image' as const }
   ];
-  
+
   // Find all matches from all patterns
   const allMatches: Array<{ match: RegExpExecArray; type: 'chart' | 'chartRef' | 'image' }> = [];
-  
+
   for (const pattern of patterns) {
     pattern.regex.lastIndex = 0; // Reset regex
     let match;
@@ -313,12 +313,12 @@ const parseContentWithCharts = (content: string) => {
       allMatches.push({ match, type: pattern.type });
     }
   }
-  
+
   // Sort matches by position
   allMatches.sort((a, b) => a.match.index - b.match.index);
-  
+
   let lastIndex = 0;
-  
+
   for (const { match, type } of allMatches) {
     // Add text before the match
     if (match.index > lastIndex) {
@@ -425,8 +425,8 @@ const NonMemoizedMarkdown = ({
         } else if (part.type === 'image' && part.imageId) {
           return (
             <div key={index} className="my-6 not-prose">
-              <ImageRenderer 
-                imageId={part.imageId} 
+              <ImageRenderer
+                imageId={part.imageId}
                 altText={part.altText}
                 sessionId={sessionId}
                 toolUseId={toolUseId}
@@ -453,8 +453,8 @@ const NonMemoizedMarkdown = ({
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => 
-    prevProps.children === nextProps.children && 
+  (prevProps, nextProps) =>
+    prevProps.children === nextProps.children &&
     prevProps.size === nextProps.size &&
     prevProps.preserveLineBreaks === nextProps.preserveLineBreaks,
 );

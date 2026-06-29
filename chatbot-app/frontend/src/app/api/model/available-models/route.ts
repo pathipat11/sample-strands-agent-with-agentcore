@@ -11,6 +11,25 @@ import { NextResponse } from 'next/server'
 export const runtime = 'nodejs'
 
 const AVAILABLE_MODELS = [
+  // Amazon Nova - native Bedrock
+  {
+    id: 'us.amazon.nova-pro-v1:0',
+    name: 'Nova Pro',
+    provider: 'Amazon',
+    description: 'High-capability model, balanced cost and performance'
+  },
+  {
+    id: 'us.amazon.nova-lite-v1:0',
+    name: 'Nova Lite',
+    provider: 'Amazon',
+    description: 'Fast and cost-effective for simpler tasks'
+  },
+  {
+    id: 'us.amazon.nova-micro-v1:0',
+    name: 'Nova Micro',
+    provider: 'Amazon',
+    description: 'Text-only, lowest latency and cost'
+  },
   // Claude (Anthropic) - native Bedrock, prompt caching
   {
     id: 'us.anthropic.claude-opus-4-8',
@@ -32,35 +51,35 @@ const AVAILABLE_MODELS = [
     description: 'Fast and efficient, cost-effective'
   },
 
-  // GPT (OpenAI) - gpt-5.x via Mantle, gpt-oss via native Bedrock
-  {
-    id: 'openai.gpt-5.5',
-    name: 'GPT-5.5',
-    provider: 'OpenAI',
-    description: 'Frontier reasoning model (via Bedrock Mantle)',
-    noTemperature: true
-  },
-  {
-    id: 'openai.gpt-5.4',
-    name: 'GPT-5.4',
-    provider: 'OpenAI',
-    description: 'Frontier model (via Bedrock Mantle)',
-    noTemperature: true
-  },
-  {
-    id: 'openai.gpt-oss-120b-1:0',
-    name: 'GPT OSS 120B',
-    provider: 'OpenAI',
-    description: 'Open-source GPT model with 120B parameters'
-  },
+  // // GPT (OpenAI) - gpt-5.x via Mantle, gpt-oss via native Bedrock
+  // {
+  //   id: 'openai.gpt-5.5',
+  //   name: 'GPT-5.5',
+  //   provider: 'OpenAI',
+  //   description: 'Frontier reasoning model (via Bedrock Mantle)',
+  //   noTemperature: true
+  // },
+  // {
+  //   id: 'openai.gpt-5.4',
+  //   name: 'GPT-5.4',
+  //   provider: 'OpenAI',
+  //   description: 'Frontier model (via Bedrock Mantle)',
+  //   noTemperature: true
+  // },
+  // {
+  //   id: 'openai.gpt-oss-120b-1:0',
+  //   name: 'GPT OSS 120B',
+  //   provider: 'OpenAI',
+  //   description: 'Open-source GPT model with 120B parameters'
+  // },
 
-  // Grok (xAI) - via Mantle
-  {
-    id: 'xai.grok-4.3',
-    name: 'Grok 4.3',
-    provider: 'xAI',
-    description: 'Advanced reasoning model (via Bedrock Mantle)'
-  },
+  // // Grok (xAI) - via Mantle
+  // {
+  //   id: 'xai.grok-4.3',
+  //   name: 'Grok 4.3',
+  //   provider: 'xAI',
+  //   description: 'Advanced reasoning model (via Bedrock Mantle)'
+  // },
 
   // DeepSeek - native Bedrock
   {
@@ -70,19 +89,19 @@ const AVAILABLE_MODELS = [
     description: 'Advanced language model with strong reasoning capabilities'
   },
 
-  // Gemma (Google) - gemma-4 via Mantle
-  {
-    id: 'google.gemma-4-31b',
-    name: 'Gemma 4 31B',
-    provider: 'Google',
-    description: 'Latest multimodal model (via Bedrock Mantle)'
-  },
-  {
-    id: 'google.gemma-4-26b-a4b',
-    name: 'Gemma 4 26B',
-    provider: 'Google',
-    description: 'Efficient MoE multimodal model (via Bedrock Mantle)'
-  },
+  // // Gemma (Google) - gemma-4 via Mantle
+  // {
+  //   id: 'google.gemma-4-31b',
+  //   name: 'Gemma 4 31B',
+  //   provider: 'Google',
+  //   description: 'Latest multimodal model (via Bedrock Mantle)'
+  // },
+  // {
+  //   id: 'google.gemma-4-26b-a4b',
+  //   name: 'Gemma 4 26B',
+  //   provider: 'Google',
+  //   description: 'Efficient MoE multimodal model (via Bedrock Mantle)'
+  // },
 
   // Z.AI GLM - native Bedrock
   {
