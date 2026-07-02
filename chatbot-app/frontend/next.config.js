@@ -1,6 +1,7 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
+const path = require('path')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -8,6 +9,17 @@ const nextConfig = {
 
   // Excalidraw uses browser APIs and must be transpiled for Next.js
   transpilePackages: ['@excalidraw/excalidraw'],
+
+  // Excalidraw's package "exports" field only exposes ./index.css under
+  // development/production conditions, which the CSS loader can't resolve.
+  // Alias the bare import to the real file so @import works in webpack mode.
+  webpack: (config) => {
+    config.resolve.alias['@excalidraw/excalidraw/index.css'] = path.resolve(
+      __dirname,
+      'node_modules/@excalidraw/excalidraw/dist/prod/index.css'
+    )
+    return config
+  },
 
   // Remove console logs in production (keep error and warn)
   compiler: {
@@ -28,7 +40,7 @@ const nextConfig = {
     // Get allowed origins from environment variable (same as backend CORS_ORIGINS)
     // This ensures consistent security policy between frontend CSP and backend CORS
     const corsOrigins = process.env.CORS_ORIGINS || process.env.NEXT_PUBLIC_CORS_ORIGINS || 'http://localhost:3000';
-    
+
     // Extract full origins from CORS configuration for CSP frame-ancestors
     // We use full origins (protocol + domain + port) for more precise control
     const allowedOrigins = corsOrigins
@@ -45,10 +57,10 @@ const nextConfig = {
       })
       .filter(Boolean)
       .join(' ');
-    
+
     // Build CSP frame-ancestors directive
     // 'self' allows same-origin embedding, then add configured origins
-    const frameAncestors = allowedOrigins 
+    const frameAncestors = allowedOrigins
       ? `frame-ancestors 'self' ${allowedOrigins}`
       : "frame-ancestors 'self'";
 

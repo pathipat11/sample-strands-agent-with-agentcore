@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Load model configuration from storage (only if not provided in request)
-    const defaultModelId = model_id || 'us.anthropic.claude-sonnet-5'
+    const defaultModelId = model_id || 'us.amazon.nova-pro-v1:0'
 
     let modelConfig = {
       model_id: defaultModelId,

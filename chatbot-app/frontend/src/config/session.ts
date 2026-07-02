@@ -94,6 +94,9 @@ const WARMUP_DEBOUNCE_MS = 30000
 let warmupInProgress = false
 
 export async function triggerWarmup(sessionId?: string, authHeaders?: Record<string, string>): Promise<void> {
+  if (process.env.NEXT_PUBLIC_AGENTCORE_LOCAL === 'true') {
+    return
+  }
   if (typeof window === 'undefined') {
     console.warn('[Warmup] Skipped: server-side rendering')
     return

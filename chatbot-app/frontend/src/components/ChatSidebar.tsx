@@ -163,7 +163,7 @@ export function ChatSidebar({
               </button>
             )}
           </div>
-          <ScrollArea className="flex-1">
+          <div className="flex-1 overflow-y-auto">
             <ChatSessionList
               sessions={chatSessions}
               currentSessionId={sessionId}
@@ -171,7 +171,7 @@ export function ChatSidebar({
               onLoadSession={loadSession}
               onDeleteSession={deleteSession}
             />
-          </ScrollArea>
+          </div>
         </div>
       )}
 

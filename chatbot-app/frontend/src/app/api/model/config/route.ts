@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     // Default configuration
     let config = {
-      model_id: 'us.anthropic.claude-sonnet-5',
+      model_id: 'us.amazon.nova-pro-v1:0',
       temperature: 0.5,
     }
 
