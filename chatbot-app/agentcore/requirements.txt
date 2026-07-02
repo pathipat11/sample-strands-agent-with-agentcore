@@ -2,12 +2,12 @@
 # Using same versions as backend for compatibility
 
 # Core Framework
-fastapi==0.138.0
+fastapi==0.138.2
 uvicorn[standard]==0.49.0
 
 # Strands Agent Framework
 strands-agents[a2a,otel]>=1.30.0
-strands-agents-tools[a2a_client]>=0.8.1
+strands-agents-tools[a2a_client]>=0.8.2
 
 # OpenAI SDK - required for Bedrock Mantle OpenAI-compatible models (gpt-5.x, grok, gemma-4)
 openai>=2.0.0
@@ -27,14 +27,14 @@ boto3>=1.43.30
 
 # HTTP
 httpx>=0.28.1
-anyio>=3.6.0
+anyio>=4.14.1
 
 # OpenTelemetry (for observability)
 aws-opentelemetry-distro>=0.18.0
 
 # Document processing
 pdf2image>=1.17.0
-pymupdf>=1.27.2.3  # PDF text extraction for large files exceeding Bedrock's 4.5MB limit
+pymupdf>=1.28.0  # PDF text extraction for large files exceeding Bedrock's 4.5MB limit
 openpyxl>=3.1.5  # Excel sheet name extraction for preview
 defusedxml>=0.7.1  # Safe XML parsing for PPTX engine
 
