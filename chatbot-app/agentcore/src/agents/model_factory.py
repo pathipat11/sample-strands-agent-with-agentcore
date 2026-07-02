@@ -19,7 +19,12 @@ from dataclasses import dataclass
 from typing import Optional
 
 import boto3
-from strands.models import BedrockModel, CacheConfig
+from strands.models import BedrockModel
+
+try:
+    from strands.models import CacheConfig
+except ImportError:
+    CacheConfig = None  # Not available in this SDK version; caching will be skipped
 
 logger = logging.getLogger(__name__)
 
@@ -220,7 +225,10 @@ def build_model(
     if not model_rejects_temperature(model_id):
         model_config["temperature"] = temperature if temperature is not None else 0.7
     if caching_enabled:
-        model_config["cache_config"] = CacheConfig(strategy="auto")
-        logger.info("Prompt caching enabled via CacheConfig(strategy='auto')")
+        if CacheConfig is not None:
+            model_config["cache_config"] = CacheConfig(strategy="auto")
+            logger.info("Prompt caching enabled via CacheConfig(strategy='auto')")
+        else:
+            logger.warning("Prompt caching requested but CacheConfig not available in this SDK version")
 
     return BedrockModel(**model_config)

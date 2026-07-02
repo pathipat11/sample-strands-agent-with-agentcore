@@ -24,8 +24,12 @@ You can verify the sync with: GET http://localhost:3000/api/tools
 
 from .diagram_tool import generate_chart, create_visual_design
 
-# Nova Act browser tools
-from .nova_act_browser_tools import browser_act, browser_get_page_info, browser_manage_tabs, browser_save_screenshot
+# Nova Act browser tools (optional - requires nova-act package)
+try:
+    from .nova_act_browser_tools import browser_act, browser_get_page_info, browser_manage_tabs, browser_save_screenshot
+    _NOVA_ACT_AVAILABLE = True
+except (ImportError, ModuleNotFoundError):
+    _NOVA_ACT_AVAILABLE = False
 
 from .word_document_tool import (
     create_word_document,
@@ -62,10 +66,6 @@ from .powerpoint_presentation_tool import (
 __all__ = [
     'generate_chart',
     'create_visual_design',
-    'browser_act',
-    'browser_get_page_info',
-    'browser_manage_tabs',
-    'browser_save_screenshot',
     'create_word_document',
     'modify_word_document',
     'list_my_word_documents',
@@ -95,6 +95,14 @@ __all__ = [
     'file_operations',
     'ci_push_to_workspace',
 ]
+
+if _NOVA_ACT_AVAILABLE:
+    __all__.extend([
+        'browser_act',
+        'browser_get_page_info',
+        'browser_manage_tabs',
+        'browser_save_screenshot',
+    ])
 
 # Collection of all builtin tools for registry sync
 BUILTIN_TOOLS = [
@@ -127,10 +135,11 @@ BUILTIN_TOOLS = [
 # Code Interpreter tools
 BUILTIN_TOOLS.extend([execute_code, execute_command, file_operations, ci_push_to_workspace])
 
-# Nova Act browser tools
-BUILTIN_TOOLS.extend([
-    browser_act,
-    browser_get_page_info,
-    browser_manage_tabs,
-    browser_save_screenshot,
-])
+# Nova Act browser tools (only if available)
+if _NOVA_ACT_AVAILABLE:
+    BUILTIN_TOOLS.extend([
+        browser_act,
+        browser_get_page_info,
+        browser_manage_tabs,
+        browser_save_screenshot,
+    ])
